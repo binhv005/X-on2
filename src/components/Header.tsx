@@ -39,19 +39,19 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-xs relative overflow-hidden">
-      {/* Decorative Floral Backgrounds on Left & Right sides */}
-      <div className="absolute left-0 top-0 bottom-0 w-36 sm:w-48 md:w-64 lg:w-80 h-full opacity-70 pointer-events-none select-none z-0">
+      {/* Decorative Silk Ribbon Waves & Pearls on Left & Right sides */}
+      <div className="absolute left-0 top-0 bottom-0 w-[36%] max-w-[460px] h-full pointer-events-none select-none z-0">
         <Image
-          src="/images/decorations/header-floral-left.png"
+          src="/images/decorations/header-ribbon-left.png"
           alt=""
           fill
           unoptimized
           className="object-contain object-left"
         />
       </div>
-      <div className="absolute right-0 top-0 bottom-0 w-36 sm:w-48 md:w-64 lg:w-80 h-full opacity-70 pointer-events-none select-none z-0">
+      <div className="absolute right-0 top-0 bottom-0 w-[36%] max-w-[460px] h-full pointer-events-none select-none z-0">
         <Image
-          src="/images/decorations/header-floral-right.png"
+          src="/images/decorations/header-ribbon-right.png"
           alt=""
           fill
           unoptimized
