@@ -5,6 +5,8 @@ import { Phone, Mail, MapPin, Clock, Send, CheckCircle2 } from "lucide-react";
 
 export default function ContactUsPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,9 +15,62 @@ export default function ContactUsPage() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const errors: Record<string, string> = {};
+    if (!formData.name.trim()) {
+      errors.name = "Your Name is required.";
+    }
+    if (!formData.email.trim()) {
+      errors.email = "Email Address is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errors.email = "Please enter a valid email address.";
+    }
+    if (!formData.message.trim()) {
+      errors.message = "Please enter your message.";
+    }
+    return errors;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setErrorMessage("Please fill in all required fields indicated below.");
+      return;
+    }
+
+    setFieldErrors({});
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          subject: formData.subject || "General Inquiry",
+          message: formData.message.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSubmitted(true);
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      } else {
+        setErrorMessage(data.message || "Failed to submit message. Please try again.");
+      }
+    } catch {
+      setErrorMessage("Network error. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -139,10 +194,22 @@ export default function ContactUsPage() {
                       type="text"
                       required
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, name: e.target.value });
+                        if (fieldErrors.name) setFieldErrors({ ...fieldErrors, name: "" });
+                      }}
                       placeholder="Jane Doe"
-                      className="w-full px-4 py-2.5 text-xs border border-gray-200 rounded-md focus:outline-hidden focus:border-black"
+                      className={`w-full px-4 py-2.5 text-xs border rounded-md focus:outline-hidden ${
+                        fieldErrors.name
+                          ? "border-rose-500 bg-rose-50/30 focus:border-rose-600"
+                          : "border-gray-200 focus:border-black"
+                      }`}
                     />
+                    {fieldErrors.name && (
+                      <span className="text-[11px] text-rose-600 font-medium mt-1 block">
+                        {fieldErrors.name}
+                      </span>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
@@ -152,10 +219,22 @@ export default function ContactUsPage() {
                       type="email"
                       required
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, email: e.target.value });
+                        if (fieldErrors.email) setFieldErrors({ ...fieldErrors, email: "" });
+                      }}
                       placeholder="jane@example.com"
-                      className="w-full px-4 py-2.5 text-xs border border-gray-200 rounded-md focus:outline-hidden focus:border-black"
+                      className={`w-full px-4 py-2.5 text-xs border rounded-md focus:outline-hidden ${
+                        fieldErrors.email
+                          ? "border-rose-500 bg-rose-50/30 focus:border-rose-600"
+                          : "border-gray-200 focus:border-black"
+                      }`}
                     />
+                    {fieldErrors.email && (
+                      <span className="text-[11px] text-rose-600 font-medium mt-1 block">
+                        {fieldErrors.email}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -198,17 +277,41 @@ export default function ContactUsPage() {
                     required
                     rows={5}
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, message: e.target.value });
+                      if (fieldErrors.message) setFieldErrors({ ...fieldErrors, message: "" });
+                    }}
                     placeholder="Tell us how we can help you..."
-                    className="w-full px-4 py-2.5 text-xs border border-gray-200 rounded-md focus:outline-hidden focus:border-black resize-y"
+                    className={`w-full px-4 py-2.5 text-xs border rounded-md focus:outline-hidden resize-y ${
+                      fieldErrors.message
+                        ? "border-rose-500 bg-rose-50/30 focus:border-rose-600"
+                        : "border-gray-200 focus:border-black"
+                    }`}
                   />
+                  {fieldErrors.message && (
+                    <span className="text-[11px] text-rose-600 font-medium mt-1 block">
+                      {fieldErrors.message}
+                    </span>
+                  )}
                 </div>
+
+                {errorMessage && (
+                  <p className="text-xs text-rose-600 bg-rose-50 p-3 rounded-lg border border-rose-200">
+                    {errorMessage}
+                  </p>
+                )}
 
                 <button
                   type="submit"
-                  className="px-8 py-3.5 bg-black hover:bg-neutral-800 text-white font-semibold text-xs uppercase tracking-widest rounded-md shadow-md transition-colors flex items-center justify-center gap-2"
+                  disabled={isSubmitting}
+                  className="px-8 py-3.5 bg-black hover:bg-neutral-800 text-white font-semibold text-xs uppercase tracking-widest rounded-md shadow-md transition-colors flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
                 >
-                  <Send className="w-4 h-4" /> Send Message
+                  {isSubmitting ? (
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
                 </button>
               </form>
             )}

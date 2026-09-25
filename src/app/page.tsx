@@ -1,16 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import productsData from "@/data/products.json";
 import siteContent from "@/data/site-content.json";
+import { type Product } from "@/components/ProductCard";
+import { mapApiProduct } from "@/lib/productMapper";
 import { Star } from "lucide-react";
 
-
 export default function HomePage() {
-  const handmadeNails = productsData.slice(0, 6);
-  const bestSellers = productsData.slice(6, 12);
+  const [productsList, setProductsList] = useState<Product[]>(() =>
+    (productsData as any[]).map(mapApiProduct)
+  );
+
+  useEffect(() => {
+    async function loadLiveProducts() {
+      try {
+        const res = await fetch("/api/products?limit=500");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data && Array.isArray(json.data.products) && json.data.products.length > 0) {
+            setProductsList(json.data.products.map(mapApiProduct));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load live products for homepage:", err);
+      }
+    }
+    loadLiveProducts();
+  }, []);
+
+  const handmadeNails = productsList.slice(0, 8);
+  const bestSellers = productsList.slice(0, 8);
   const reviews = siteContent.reviews || [];
 
   return (

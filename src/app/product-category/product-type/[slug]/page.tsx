@@ -1,10 +1,11 @@
 "use client";
 
-import React, { use } from "react";
+import React, { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ProductCard } from "@/components/ProductCard";
+import { ProductCard, type Product } from "@/components/ProductCard";
 import productsData from "@/data/products.json";
+import { mapApiProduct } from "@/lib/productMapper";
 
 const categoryNames: Record<string, { title: string; desc: string }> = {
   "handmade-grip-x-nails": {
@@ -32,6 +33,26 @@ export default function ProductTypeCategoryPage({
 }) {
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
+  const [productsList, setProductsList] = useState<Product[]>(() =>
+    (productsData as any[]).map(mapApiProduct)
+  );
+
+  useEffect(() => {
+    async function loadLiveProducts() {
+      try {
+        const res = await fetch("/api/products?limit=500");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data && Array.isArray(json.data.products) && json.data.products.length > 0) {
+            setProductsList(json.data.products.map(mapApiProduct));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load live products:", err);
+      }
+    }
+    loadLiveProducts();
+  }, []);
 
   const info = categoryNames[slug] || {
     title: slug.replace(/-/g, " ").toUpperCase(),
@@ -39,12 +60,28 @@ export default function ProductTypeCategoryPage({
   };
 
   // Filter products matching category
-  const filtered = productsData.filter((p) => {
-    if (slug === "handmade-grip-x-nails") return true;
+  const filtered = productsList.filter((p) => {
+    if (slug === "handmade-grip-x-nails") {
+      return (
+        p.handmadeGripX === true ||
+        p.featured === true ||
+        p.category?.toLowerCase().includes("handmade") ||
+        p.category?.toLowerCase().includes("grip-x") ||
+        p.title.toLowerCase().includes("handmade") ||
+        p.slug.toLowerCase().includes("handmade")
+      );
+    }
+    if (slug === "best-seller") {
+      return (
+        p.bestSeller === true ||
+        p.category?.toLowerCase().includes("best") ||
+        p.title.toLowerCase().includes("best") ||
+        p.slug.toLowerCase().includes("best")
+      );
+    }
     if (slug === "cold-gel-glue") return p.slug.includes("glue") || p.title.toLowerCase().includes("glue");
     if (slug === "cold-gel-remover") return p.slug.includes("remover") || p.title.toLowerCase().includes("remover");
-    if (slug === "best-seller") return true;
-    return p.category?.toLowerCase().includes(slug.toLowerCase());
+    return p.category?.toLowerCase().includes(slug.toLowerCase()) || p.slug.toLowerCase().includes(slug.toLowerCase());
   });
 
   return (

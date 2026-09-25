@@ -1,12 +1,26 @@
 "use client";
 
-
-import React, { use } from "react";
+import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import siteContent from "@/data/site-content.json";
 import { Calendar, ArrowLeft, ArrowRight } from "lucide-react";
+
+import { parseBlogContentToHtml } from "@/lib/blogParser";
+
+interface BlogPost {
+  id?: string;
+  slug: string;
+  title: string;
+  date?: string;
+  createdAt?: string;
+  thumbnail?: string;
+  image?: string;
+  paragraphs?: string[];
+  content?: string;
+  excerpt?: string;
+  author?: string;
+}
 
 export default function BlogPostDetailPage({
   params,
@@ -16,21 +30,79 @@ export default function BlogPostDetailPage({
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
 
-interface BlogPost {
-  slug: string;
-  title: string;
-  date: string;
-  image?: string;
-  paragraphs?: string[];
-  excerpt?: string;
-}
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const post = siteContent.blogPosts?.find((p: BlogPost) => p.slug === slug);
-  if (!post) {
-    notFound();
+  useEffect(() => {
+    async function loadPost() {
+      setIsLoading(true);
+      try {
+        // 1. Try fetching from dynamic API
+        const res = await fetch(`/api/blog/${slug}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setPost({
+              ...json.data,
+              image: json.data.thumbnail || json.data.image,
+              date: json.data.createdAt
+                ? new Date(json.data.createdAt).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })
+                : "Recent",
+            });
+            setIsLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Fetch blog error", err);
+      }
+
+      // 2. Fallback to siteContent.json
+      const staticPost = siteContent.blogPosts?.find(
+        (p: BlogPost) => p.slug === slug
+      );
+      if (staticPost) {
+        setPost(staticPost);
+      }
+      setIsLoading(false);
+    }
+
+    loadPost();
+  }, [slug]);
+
+  if (isLoading) {
+    return (
+      <div className="bg-white min-h-screen py-24 text-center">
+        <span className="w-8 h-8 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin inline-block" />
+        <p className="text-xs text-neutral-500 mt-2">Loading article...</p>
+      </div>
+    );
   }
 
-  const otherPosts = siteContent.blogPosts?.filter((p: BlogPost) => p.slug !== slug).slice(0, 2);
+  if (!post) {
+    return (
+      <div className="bg-white min-h-screen py-24 text-center space-y-4">
+        <h1 className="text-2xl font-bold text-neutral-900">Article Not Found</h1>
+        <p className="text-xs text-neutral-500">
+          The requested article could not be found or may have been removed.
+        </p>
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white text-xs font-bold uppercase tracking-wider rounded-full hover:bg-neutral-800 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Journal
+        </Link>
+      </div>
+    );
+  }
+
+  const otherPosts = siteContent.blogPosts
+    ?.filter((p: BlogPost) => p.slug !== slug)
+    .slice(0, 2);
 
   return (
     <div className="bg-white min-h-screen py-12 sm:py-20">
@@ -47,7 +119,13 @@ interface BlogPost {
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-xs text-neutral-400">
             <Calendar className="w-3.5 h-3.5" />
-            <span>{post.date}</span>
+            <span>{post.date || "Recent"}</span>
+            {post.author && (
+              <>
+                <span className="text-neutral-300">•</span>
+                <span>By {post.author}</span>
+              </>
+            )}
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-gray-950 font-serif leading-tight">
             {post.title}
@@ -55,26 +133,37 @@ interface BlogPost {
         </div>
 
         {/* Feature Cover Image */}
-        <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-neutral-100">
-          <Image
-            src={post.image || "/images/logo-xon.png"}
-            alt={post.title}
-            fill
-            priority
-            unoptimized
-            className="object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = "/images/logo-xon.png";
-            }}
-          />
-        </div>
+        {(post.thumbnail || post.image) && (
+          <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-neutral-100">
+            <Image
+              src={post.thumbnail || post.image || "/images/logo-xon.png"}
+              alt={post.title}
+              fill
+              priority
+              unoptimized
+              className="object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "/images/logo-xon.png";
+              }}
+            />
+          </div>
+        )}
 
-        {/* Article Body */}
+        {/* Article Body with support for HTML formatted images and markdown */}
         <div className="prose prose-neutral max-w-none space-y-6 text-gray-700 text-sm sm:text-base leading-relaxed">
-          {post.paragraphs?.map((para: string, idx: number) => (
-            <p key={idx}>{para}</p>
-          ))}
+          {post.content ? (
+            <div
+              className="space-y-4 leading-relaxed [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-gray-900 [&_h3]:mt-6 [&_h3]:mb-3 [&_p]:my-3 [&_img]:inline-block [&_img]:max-w-full [&_figure]:my-6 [&_blockquote]:border-l-4 [&_blockquote]:border-amber-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-neutral-600"
+              dangerouslySetInnerHTML={{
+                __html: parseBlogContentToHtml(post.content),
+              }}
+            />
+          ) : (
+            post.paragraphs?.map((para: string, idx: number) => (
+              <p key={idx}>{para}</p>
+            ))
+          )}
         </div>
 
         {/* CTA Banner inside post */}
@@ -119,3 +208,4 @@ interface BlogPost {
     </div>
   );
 }
+

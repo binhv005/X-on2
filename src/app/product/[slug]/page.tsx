@@ -19,6 +19,8 @@ import {
   ShoppingBag,
   Heart,
   Share2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 export default function ProductDetailPage({
@@ -29,15 +31,45 @@ export default function ProductDetailPage({
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
 
-  const product = (productsData as Product[]).find((p) => p.slug === slug);
-  if (!product) {
-    notFound();
-  }
-
+  const staticProduct = (productsData as Product[]).find((p) => p.slug === slug);
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState<string>("M");
   const [quantity, setQuantity] = useState<number>(1);
   const [added, setAdded] = useState(false);
+  const [stock, setStock] = useState<number>(staticProduct?.stock ?? 20);
+  const [productDetails, setProductDetails] = useState<any>(staticProduct || null);
+  const [notFoundState, setNotFoundState] = useState(false);
+  const [activeImage, setActiveImage] = useState<string>("");
+
+  // Fetch live product from API to get exact product & stock from DataStore
+  React.useEffect(() => {
+    async function fetchLiveProduct() {
+      try {
+        const res = await fetch(`/api/products/${slug}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setProductDetails(json.data);
+            if (typeof json.data.stock === "number") {
+              setStock(json.data.stock);
+            }
+          } else if (!staticProduct) {
+            setNotFoundState(true);
+          }
+        } else if (!staticProduct) {
+          setNotFoundState(true);
+        }
+      } catch (err) {
+        console.error("Error fetching live product stock:", err);
+        if (!staticProduct) setNotFoundState(true);
+      }
+    }
+    fetchLiveProduct();
+  }, [slug, staticProduct]);
+
+  if (notFoundState) {
+    notFound();
+  }
 
   const sizes = [
     { label: "XS", desc: "14 · 10 · 11 · 10 · 7 mm" },
@@ -50,7 +82,63 @@ export default function ProductDetailPage({
     .filter((p) => p.slug !== slug)
     .slice(0, 4);
 
+  const raw = productDetails || staticProduct;
+  if (!raw) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-3 border-neutral-900 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const product: Product = {
+    id: raw.id || raw.slug || slug,
+    slug: raw.slug || slug,
+    title: raw.name || raw.title || "X-ON Nails",
+    price:
+      typeof raw.price === "number"
+        ? `$${raw.price.toFixed(2)}`
+        : typeof raw.price === "string" && raw.price.startsWith("$")
+        ? raw.price
+        : raw.price
+        ? `$${raw.price}`
+        : "$24.99",
+    originalPrice: raw.salePrice
+      ? typeof raw.salePrice === "number"
+        ? `$${raw.salePrice.toFixed(2)}`
+        : `$${raw.salePrice}`
+      : undefined,
+    image:
+      activeImage ||
+      raw.thumbnail ||
+      raw.images?.[0] ||
+      raw.image ||
+      "/images/IMG_7098.JPG",
+    category: raw.category || "Handmade Grip-X Nails",
+    url: `/product/${slug}`,
+    description: raw.description || "",
+    stock: stock,
+  };
+
+  const rawImagesList: string[] = Array.isArray(raw.images) && raw.images.length > 0 
+    ? raw.images 
+    : [raw.thumbnail || raw.image || product.image].filter(Boolean);
+  const galleryImages: string[] = Array.from(new Set(rawImagesList.filter(Boolean)));
+
+  const thumbnailScrollRef = React.useRef<HTMLDivElement>(null);
+  const scrollThumbnails = (direction: "left" | "right") => {
+    if (thumbnailScrollRef.current) {
+      const scrollAmount = 200;
+      thumbnailScrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleAddToCart = () => {
+    if (stock <= 0) return;
+
     addItem(
       {
         id: `${product.id}-${selectedSize}`,
@@ -59,6 +147,7 @@ export default function ProductDetailPage({
         price: product.price,
         image: product.image,
         size: selectedSize,
+        maxStock: stock,
       },
       quantity
     );
@@ -88,37 +177,107 @@ export default function ProductDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Left: Product Images Gallery */}
           <div className="space-y-4">
-            <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-neutral-50 border border-gray-100 shadow-sm">
+            {/* Main Featured Image */}
+            <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-neutral-50 border border-gray-100 shadow-sm group">
               <Image
                 src={product.image || "/images/logolala.webp"}
                 alt={product.title}
                 fill
                 priority
-                className="object-cover"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
               {product.originalPrice && (
-                <span className="absolute top-4 left-4 bg-rose-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                <span className="absolute top-4 left-4 bg-rose-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md z-10">
                   Sale
                 </span>
               )}
+
+              {/* Prev / Next navigation on main image if multiple images exist */}
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const curIdx = galleryImages.indexOf(product.image);
+                      const nextIdx = curIdx <= 0 ? galleryImages.length - 1 : curIdx - 1;
+                      setActiveImage(galleryImages[nextIdx]);
+                    }}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/85 hover:bg-white text-neutral-800 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer z-10 hover:scale-110"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const curIdx = galleryImages.indexOf(product.image);
+                      const nextIdx = curIdx >= galleryImages.length - 1 ? 0 : curIdx + 1;
+                      setActiveImage(galleryImages[nextIdx]);
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/85 hover:bg-white text-neutral-800 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer z-10 hover:scale-110"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
             </div>
 
-            {/* Thumbnail previews */}
-            <div className="grid grid-cols-4 gap-3">
-              {[product.image, "/images/logolala.webp"].map((img, idx) => (
-                <div
-                  key={idx}
-                  className="relative aspect-square rounded-lg overflow-hidden border-2 border-black/10 cursor-pointer hover:border-black transition-colors"
+            {/* Horizontal Scrolling Thumbnail Slider */}
+            {galleryImages.length > 1 && (
+              <div className="relative group/thumbs pt-1">
+                {/* Scroll Left Button */}
+                <button
+                  type="button"
+                  onClick={() => scrollThumbnails("left")}
+                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/95 hover:bg-white text-neutral-800 rounded-full shadow-md border border-neutral-200 flex items-center justify-center transition-all opacity-0 group-hover/thumbs:opacity-100 hover:scale-105 cursor-pointer"
+                  aria-label="Scroll thumbnails left"
                 >
-                  <Image
-                    src={img}
-                    alt={`${product.title} thumbnail ${idx + 1}`}
-                    fill
-                    className="object-cover"
-                  />
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                {/* Horizontal Scrollable Thumbnails Container */}
+                <div
+                  ref={thumbnailScrollRef}
+                  className="flex items-center gap-3 overflow-x-auto py-1 px-1 scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                >
+                  {galleryImages.map((img: string, idx: number) => {
+                    const isSelected = product.image === img;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setActiveImage(img)}
+                        className={`relative w-20 h-20 sm:w-22 sm:h-22 shrink-0 rounded-xl overflow-hidden border-2 cursor-pointer transition-all duration-200 snap-start ${
+                          isSelected
+                            ? "border-black ring-2 ring-black/15 shadow-sm scale-102"
+                            : "border-neutral-200/80 hover:border-neutral-400 opacity-60 hover:opacity-100"
+                        }`}
+                      >
+                        <Image
+                          src={img}
+                          alt={`${product.title} thumbnail ${idx + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </button>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
+
+                {/* Scroll Right Button */}
+                <button
+                  type="button"
+                  onClick={() => scrollThumbnails("right")}
+                  className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/95 hover:bg-white text-neutral-800 rounded-full shadow-md border border-neutral-200 flex items-center justify-center transition-all opacity-0 group-hover/thumbs:opacity-100 hover:scale-105 cursor-pointer"
+                  aria-label="Scroll thumbnails right"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Right: Product Info & Purchase Options */}
@@ -146,19 +305,32 @@ export default function ProductDetailPage({
               </div>
             </div>
 
-            {/* Pricing */}
-            <div className="flex items-baseline gap-3 pb-4 border-b border-gray-100">
-              <span className="text-3xl font-extrabold text-gray-950">
-                {product.price}
-              </span>
-              {product.originalPrice && (
-                <span className="text-lg text-gray-400 line-through">
-                  {product.originalPrice}
+            {/* Pricing & Stock Status */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-gray-100">
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl font-extrabold text-gray-950">
+                  {product.price}
+                </span>
+                {product.originalPrice && (
+                  <span className="text-lg text-gray-400 line-through">
+                    {product.originalPrice}
+                  </span>
+                )}
+              </div>
+
+              {stock <= 0 ? (
+                <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full">
+                  Out of Stock
+                </span>
+              ) : stock <= 5 ? (
+                <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full animate-pulse">
+                  Only {stock} sets left in stock!
+                </span>
+              ) : (
+                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                  In Stock ({stock} available)
                 </span>
               )}
-              <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                In Stock &amp; Ready to Ship
-              </span>
             </div>
 
             {/* Size Selector */}
@@ -201,18 +373,20 @@ export default function ProductDetailPage({
               <div className="flex items-center gap-4">
                 <div className="flex items-center border border-gray-300 rounded-md">
                   <button
+                    disabled={stock <= 0 || quantity <= 1}
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="p-3 hover:bg-gray-100 text-gray-600"
+                    className="p-3 hover:bg-gray-100 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
                   <span className="px-4 text-sm font-bold text-gray-900">
-                    {quantity}
+                    {stock <= 0 ? 0 : quantity}
                   </span>
                   <button
-                    onClick={() => setQuantity((q) => q + 1)}
-                    className="p-3 hover:bg-gray-100 text-gray-600"
+                    disabled={stock <= 0 || quantity >= stock}
+                    onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
+                    className="p-3 hover:bg-gray-100 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
                     aria-label="Increase quantity"
                   >
                     <Plus className="w-4 h-4" />
@@ -220,17 +394,25 @@ export default function ProductDetailPage({
                 </div>
 
                 <button
+                  disabled={stock <= 0}
                   onClick={handleAddToCart}
                   className={`flex-1 py-3.5 px-6 rounded-md font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${
-                    added
+                    stock <= 0
+                      ? "bg-neutral-200 text-neutral-400 cursor-not-allowed border border-neutral-300"
+                      : added
                       ? "bg-emerald-600 text-white"
-                      : "bg-black hover:bg-neutral-800 text-white shadow-lg"
+                      : "bg-black hover:bg-neutral-800 text-white shadow-lg cursor-pointer"
                   }`}
                 >
                   <ShoppingBag className="w-4 h-4" />
-                  {added ? "Added to Cart!" : "Add to Cart"}
+                  {stock <= 0 ? "Out of Stock" : added ? "Added to Cart!" : "Add to Cart"}
                 </button>
               </div>
+              {stock > 0 && quantity >= stock && (
+                <p className="text-[11px] text-amber-600 font-medium">
+                  ⚠️ Maximum available stock reached ({stock} items in stock).
+                </p>
+              )}
             </div>
 
             {/* Trust Badges */}

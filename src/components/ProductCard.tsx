@@ -14,12 +14,19 @@ export interface Product {
   originalPrice?: string;
   image: string;
   category?: string;
+  designThemes?: string[];
+  length?: string;
+  bestSeller?: boolean;
+  handmadeGripX?: boolean;
+  featured?: boolean;
   url: string;
   description?: string;
+  stock?: number;
 }
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
+  const isOutOfStock = product.stock !== undefined && product.stock <= 0;
 
   return (
     <div className="group relative flex flex-col bg-white rounded-lg overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300">
@@ -36,28 +43,41 @@ export function ProductCard({ product }: { product: Product }) {
         </Link>
 
         {/* Badges */}
-        {product.originalPrice && (
-          <span className="absolute top-2.5 left-2.5 bg-rose-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-xs">
-            Sale
-          </span>
-        )}
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
+          {isOutOfStock ? (
+            <span className="bg-neutral-900 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-xs">
+              Out of stock
+            </span>
+          ) : product.originalPrice ? (
+            <span className="bg-rose-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-xs">
+              Sale
+            </span>
+          ) : null}
+        </div>
 
         {/* Quick Add Overlay Button on Hover */}
         <div className="absolute inset-x-2 bottom-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1.5">
-          <button
-            onClick={() =>
-              addItem({
-                id: product.id,
-                slug: product.slug,
-                title: product.title,
-                price: product.price,
-                image: product.image,
-              })
-            }
-            className="flex-1 bg-black/90 hover:bg-black text-white text-xs font-semibold py-2 px-3 rounded-md backdrop-blur-xs flex items-center justify-center gap-1.5 shadow-md transition-colors"
-          >
-            <ShoppingBag className="w-3.5 h-3.5" /> Quick Add
-          </button>
+          {!isOutOfStock ? (
+            <button
+              onClick={() =>
+                addItem({
+                  id: product.id,
+                  slug: product.slug,
+                  title: product.title,
+                  price: product.price,
+                  image: product.image,
+                  maxStock: product.stock ?? 25,
+                })
+              }
+              className="flex-1 bg-black/90 hover:bg-black text-white text-xs font-semibold py-2 px-3 rounded-md backdrop-blur-xs flex items-center justify-center gap-1.5 shadow-md transition-colors cursor-pointer"
+            >
+              <ShoppingBag className="w-3.5 h-3.5" /> Quick Add
+            </button>
+          ) : (
+            <span className="flex-1 bg-neutral-800/80 text-white text-[11px] font-semibold py-2 px-3 rounded-md text-center">
+              Out of stock
+            </span>
+          )}
           <Link
             href={`/product/${product.slug}`}
             className="bg-white/90 hover:bg-white text-gray-800 p-2 rounded-md backdrop-blur-xs flex items-center justify-center shadow-md transition-colors"

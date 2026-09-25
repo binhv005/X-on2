@@ -1,9 +1,10 @@
 "use client";
 
-import React, { use } from "react";
+import React, { use, useState, useEffect } from "react";
 import Link from "next/link";
-import { ProductCard } from "@/components/ProductCard";
+import { ProductCard, type Product } from "@/components/ProductCard";
 import productsData from "@/data/products.json";
+import { mapApiProduct } from "@/lib/productMapper";
 
 const themeDescriptions: Record<string, { title: string; desc: string }> = {
   "3d": {
@@ -27,22 +28,48 @@ export default function DesignThemeCategoryPage({
 }) {
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
+  const [productsList, setProductsList] = useState<Product[]>(() =>
+    (productsData as any[]).map(mapApiProduct)
+  );
+
+  useEffect(() => {
+    async function loadLiveProducts() {
+      try {
+        const res = await fetch("/api/products?limit=500");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data && Array.isArray(json.data.products) && json.data.products.length > 0) {
+            setProductsList(json.data.products.map(mapApiProduct));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load live products:", err);
+      }
+    }
+    loadLiveProducts();
+  }, []);
 
   const info = themeDescriptions[slug] || {
     title: `${slug.toUpperCase()} Theme`,
     desc: "Discover our specialized nail art theme collection.",
   };
 
-  const filtered = productsData.filter((p) => {
+  const filtered = productsList.filter((p) => {
+    const slugLower = slug.toLowerCase();
+    const hasThemeMatch =
+      Array.isArray(p.designThemes) &&
+      p.designThemes.some((t) => t.toLowerCase() === slugLower || t.toLowerCase().includes(slugLower));
+
     return (
-      p.title.toLowerCase().includes(slug.toLowerCase()) ||
-      p.category?.toLowerCase().includes(slug.toLowerCase()) ||
-      p.slug.toLowerCase().includes(slug.toLowerCase())
+      hasThemeMatch ||
+      p.title.toLowerCase().includes(slugLower) ||
+      p.category?.toLowerCase().includes(slugLower) ||
+      p.slug.toLowerCase().includes(slugLower)
     );
   });
 
   // Fallback to general list if filter produces few
-  const displayProducts = filtered.length > 0 ? filtered : productsData.slice(0, 12);
+  const displayProducts = filtered.length > 0 ? filtered : productsList.slice(0, 12);
 
   return (
     <div className="bg-white min-h-screen py-12 sm:py-16">

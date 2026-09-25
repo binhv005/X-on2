@@ -11,6 +11,13 @@ export interface CartItem {
   image: string;
   quantity: number;
   size?: string;
+  maxStock?: number;
+}
+
+export interface AddItemResult {
+  success: boolean;
+  message?: string;
+  addedQuantity?: number;
 }
 
 interface CartContextType {
@@ -18,9 +25,12 @@ interface CartContextType {
   isOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (item: Omit<CartItem, "quantity" | "priceNumber">, quantity?: number) => void;
+  addItem: (
+    item: Omit<CartItem, "quantity" | "priceNumber">,
+    quantity?: number
+  ) => AddItemResult;
   removeItem: (id: string) => void;
-  updateQuantity: (id: string, delta: number) => void;
+  updateQuantity: (id: string, delta: number) => { success: boolean; message?: string };
   clearCart: () => void;
   totalCount: number;
   subtotal: number;
@@ -57,42 +67,116 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return parseFloat(cleaned) || 19.99;
   };
 
-  const addItem = (item: Omit<CartItem, "quantity" | "priceNumber">, quantity: number = 1) => {
+  const addItem = (
+    item: Omit<CartItem, "quantity" | "priceNumber">,
+    quantity: number = 1
+  ): AddItemResult => {
+    const maxStock = item.maxStock !== undefined ? item.maxStock : 99;
+
+    if (maxStock <= 0) {
+      return {
+        success: false,
+        message: "This item is currently out of stock.",
+      };
+    }
+
+    let result: AddItemResult = { success: true, addedQuantity: quantity };
+
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
-      if (existing) {
-        return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
+      const existingIndex = prev.findIndex((i) => i.id === item.id);
+      if (existingIndex !== -1) {
+        const existing = prev[existingIndex];
+        const currentQty = existing.quantity;
+        const availableStock = item.maxStock !== undefined ? item.maxStock : existing.maxStock ?? 99;
+
+        if (currentQty >= availableStock) {
+          result = {
+            success: false,
+            message: `You already have the maximum available stock in your cart (${availableStock} items).`,
+          };
+          return prev;
+        }
+
+        const newQty = Math.min(availableStock, currentQty + quantity);
+        const actualAdded = newQty - currentQty;
+
+        if (actualAdded < quantity) {
+          result = {
+            success: true,
+            message: `Added ${actualAdded} items to reach maximum available stock (${availableStock}).`,
+            addedQuantity: actualAdded,
+          };
+        }
+
+        return prev.map((i, idx) =>
+          idx === existingIndex
+            ? {
+                ...i,
+                quantity: newQty,
+                maxStock: availableStock,
+              }
+            : i
         );
       }
+
+      // New item
+      const initialQty = Math.min(maxStock, Math.max(1, quantity));
+      if (initialQty < quantity) {
+        result = {
+          success: true,
+          message: `Added ${initialQty} items (maximum available stock).`,
+          addedQuantity: initialQty,
+        };
+      }
+
       return [
         ...prev,
         {
           ...item,
-          quantity,
+          quantity: initialQty,
+          maxStock,
           priceNumber: parsePrice(item.price),
         },
       ];
     });
+
     setIsOpen(true);
+    return result;
   };
 
   const removeItem = (id: string) => {
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  const updateQuantity = (id: string, delta: number) => {
+  const updateQuantity = (
+    id: string,
+    delta: number
+  ): { success: boolean; message?: string } => {
+    let result = { success: true, message: "" };
+
     setItems((prev) =>
       prev
         .map((i) => {
           if (i.id === id) {
+            const maxStock = i.maxStock !== undefined ? i.maxStock : 99;
             const newQty = i.quantity + delta;
+
+            if (delta > 0 && newQty > maxStock) {
+              result = {
+                success: false,
+                message: `Maximum available stock reached (${maxStock} items).`,
+              };
+              return i;
+            }
+
             return newQty > 0 ? { ...i, quantity: newQty } : null;
           }
           return i;
         })
         .filter(Boolean) as CartItem[]
     );
+
+    return result;
   };
 
   const clearCart = () => setItems([]);

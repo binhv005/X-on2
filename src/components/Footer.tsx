@@ -1,11 +1,37 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Phone } from "lucide-react";
+import { MapPin, Phone, Send, Check } from "lucide-react";
 
 export function Footer() {
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail || !newsletterEmail.includes("@")) return;
+
+    setNewsletterLoading(true);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newsletterEmail }),
+      });
+      if (res.ok) {
+        setNewsletterSuccess(true);
+        setNewsletterEmail("");
+      }
+    } catch {
+      console.error("Newsletter error");
+    } finally {
+      setNewsletterLoading(false);
+    }
+  };
+
   return (
     <footer className="bg-[#faf4f2] text-gray-800 border-t border-[#f0e6e3]">
       {/* Main footer grid */}
@@ -14,7 +40,7 @@ export function Footer() {
 
           {/* Col 1: Logo + tagline + description */}
           <div className="space-y-4 sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="relative block h-20 w-60">
+            <Link href="/" className="relative block h-28 w-80">
               <Image
                 src="/images/logo-xon.png"
                 alt="X-ON"
@@ -29,6 +55,42 @@ export function Footer() {
             <p className="text-xs text-gray-500 leading-relaxed max-w-xs">
               X-ON is where modern nail artistry meets effortless luxury. Handcrafted bespoke press-on nails and premium essentials designed for long-lasting salon elegance.
             </p>
+
+            {/* Newsletter input */}
+            <div className="pt-2">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-gray-900 mb-2">
+                Join X-ON VIP Club
+              </p>
+              {newsletterSuccess ? (
+                <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Subscribed! Check your inbox.</span>
+                </div>
+              ) : (
+                <form onSubmit={handleNewsletterSubmit} className="flex gap-1.5 max-w-xs">
+                  <input
+                    type="email"
+                    required
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    placeholder="Enter your email..."
+                    className="flex-1 px-3 py-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+                  />
+                  <button
+                    type="submit"
+                    disabled={newsletterLoading}
+                    className="px-3 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs transition-colors flex items-center justify-center cursor-pointer disabled:opacity-50"
+                    title="Subscribe"
+                  >
+                    {newsletterLoading ? (
+                      <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <Send className="w-3 h-3" />
+                    )}
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
 
           {/* Col 2: Explore X-ON */}

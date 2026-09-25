@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import productsData from "@/data/products.json";
+import { type Product } from "@/components/ProductCard";
+import { mapApiProduct } from "@/lib/productMapper";
 import { Search, ChevronRight } from "lucide-react";
 
 export default function ShopPage() {
+  const [productsList, setProductsList] = useState<Product[]>(() =>
+    (productsData as any[]).map(mapApiProduct)
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTheme, setSelectedTheme] = useState<string[]>([]);
   const [selectedShape, setSelectedShape] = useState<string>("all");
@@ -16,6 +21,23 @@ export default function ShopPage() {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedLength, setSelectedLength] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("default");
+
+  useEffect(() => {
+    async function loadLiveProducts() {
+      try {
+        const res = await fetch("/api/products?limit=500");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data && Array.isArray(json.data.products) && json.data.products.length > 0) {
+            setProductsList(json.data.products.map(mapApiProduct));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch live products:", err);
+      }
+    }
+    loadLiveProducts();
+  }, []);
 
   const shapes = [
     { name: "Almond", img: "/images/ChatGPT-Image-14_53_06-6-thg-7-2026.png" },
@@ -48,7 +70,7 @@ export default function ShopPage() {
   ];
 
   const filteredProducts = useMemo(() => {
-    return productsData
+    return productsList
       .filter((p) => {
         // Search
         if (searchQuery.trim() && !p.title.toLowerCase().includes(searchQuery.toLowerCase())) {
@@ -62,12 +84,30 @@ export default function ShopPage() {
 
         // Type filter
         if (selectedType !== "all") {
-          const tName = selectedType.replace(/-/g, " ");
-          const matches =
-            p.category?.toLowerCase().includes(tName.toLowerCase()) ||
-            p.title.toLowerCase().includes(tName.toLowerCase()) ||
-            p.slug.toLowerCase().includes(selectedType.toLowerCase());
-          if (!matches) return false;
+          if (selectedType === "best-seller") {
+            const isBestSeller =
+              p.bestSeller === true ||
+              p.category?.toLowerCase().includes("best") ||
+              p.title.toLowerCase().includes("best") ||
+              p.slug.toLowerCase().includes("best");
+            if (!isBestSeller) return false;
+          } else if (selectedType === "handmade-grip-x-nails") {
+            const isHandmade =
+              p.handmadeGripX === true ||
+              p.featured === true ||
+              p.category?.toLowerCase().includes("handmade") ||
+              p.category?.toLowerCase().includes("grip-x") ||
+              p.title.toLowerCase().includes("handmade") ||
+              p.slug.toLowerCase().includes("handmade");
+            if (!isHandmade) return false;
+          } else {
+            const tName = selectedType.replace(/-/g, " ");
+            const matches =
+              p.category?.toLowerCase().includes(tName.toLowerCase()) ||
+              p.title.toLowerCase().includes(tName.toLowerCase()) ||
+              p.slug.toLowerCase().includes(selectedType.toLowerCase());
+            if (!matches) return false;
+          }
         }
 
         // Price filter
@@ -84,7 +124,7 @@ export default function ShopPage() {
         if (sortBy === "title-asc") return a.title.localeCompare(b.title);
         return 0;
       });
-  }, [searchQuery, selectedShape, selectedType, maxPrice, sortBy]);
+  }, [productsList, searchQuery, selectedShape, selectedType, maxPrice, sortBy]);
 
   return (
     <div className="bg-white min-h-screen py-8">

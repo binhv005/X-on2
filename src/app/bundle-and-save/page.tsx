@@ -140,6 +140,7 @@ export default function BundleAndSavePage() {
                           slug: prod.slug,
                           price: prod.salePrice,
                           image: prod.image,
+                          maxStock: 25,
                         })
                       }
                       className="w-full py-2 px-3 border border-black hover:bg-black hover:text-white text-black text-[11px] font-bold uppercase tracking-wider rounded-sm transition-colors text-center"

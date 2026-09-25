@@ -41,12 +41,12 @@ export function Header() {
     <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-xs">
       {/* Top Header Row: Hamburger - Logo - Icons */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative flex items-center justify-between h-16 sm:h-20">
+        <div className="relative flex items-center justify-between h-14 sm:h-16 md:h-18 lg:h-20">
           {/* Left: Mobile hamburger - only on mobile/tablet */}
           <div className="flex items-center lg:hidden">
             <button
               onClick={() => setMobileOpen(true)}
-              className="p-2 text-gray-800 hover:text-black focus:outline-hidden"
+              className="p-2 text-gray-800 hover:text-black focus:outline-hidden cursor-pointer"
               aria-label="Open menu"
             >
               <Menu className="w-6 h-6 stroke-[1.5]" />
@@ -61,11 +61,11 @@ export function Header() {
             <Link
               href="/"
               onClick={handleLinkClick}
-              className="relative block h-10 sm:h-11 md:h-12 w-24 sm:w-32 md:w-36 lg:w-40 transition-transform hover:scale-105"
+              className="relative block h-9 sm:h-11 md:h-13 lg:h-15 w-28 sm:w-36 md:w-[160px] lg:w-[182px] transition-transform hover:scale-105"
             >
               <Image
                 src="/images/logo-xon.png"
-                alt="X-ON"
+                alt="X-ON Nails"
                 fill
                 priority
                 unoptimized
@@ -76,12 +76,12 @@ export function Header() {
 
           {/* Right: Icons (Account/Avatar, Wishlist, Search, Cart) */}
           <div className="flex items-center space-x-2 sm:space-x-4 text-gray-800">
-            {/* Avatar / User icon -> returns to Home and scrolls to top */}
+            {/* Avatar / User icon -> navigates to Admin / Account Login */}
             <Link
-              href="/"
-              onClick={handleLinkClick}
-              className="p-1.5 hover:text-rose-700 transition-colors hidden sm:block"
-              title="Home"
+              href="/admin/login"
+              className="p-1.5 hover:text-rose-700 transition-colors"
+              title="Sign In / Account"
+              aria-label="Sign In / Account"
             >
               <User className="w-5 h-5 stroke-[1.5]" />
             </Link>
@@ -167,7 +167,10 @@ export function Header() {
             <li className="group py-3">
               <Link
                 href="/shop"
-                onClick={handleLinkClick}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = "/shop";
+                }}
                 className="hover:text-rose-700 transition-colors flex items-center gap-1.5"
               >
                 SHOP <ChevronDown className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-200 stroke-[2]" />
@@ -420,7 +423,11 @@ export function Header() {
                 >
                   <Link
                     href="/shop"
-                    onClick={handleDrawerLinkClick}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setMobileOpen(false);
+                      window.location.href = "/shop";
+                    }}
                     className="flex-1"
                   >
                     SHOP
@@ -564,7 +571,7 @@ export function Header() {
 
               {/* LOGIN */}
               <Link
-                href="/wholesale-signup"
+                href="/admin/login"
                 onClick={handleDrawerLinkClick}
                 className="block py-3.5 px-6 text-[13px] font-bold uppercase tracking-wider text-neutral-600 hover:text-black hover:bg-neutral-50 transition-colors"
               >

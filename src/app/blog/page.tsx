@@ -1,14 +1,11 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Metadata } from "next";
+import { BlogPostItem } from "@/types/admin";
 
-export const metadata: Metadata = {
-  title: "Blog – X-ON",
-  description: "Latest news, tips, and inspiration from X-ON.",
-};
-
-const blogPosts = [
+const defaultBlogPosts = [
   {
     title: "EXTRA-LONG HANDMADE NAIL LUXURY",
     slug: "extra-long-handmade-nail-luxury",
@@ -36,9 +33,47 @@ const blogPosts = [
 ];
 
 export default function BlogIndexPage() {
+  const [posts, setPosts] = useState(defaultBlogPosts);
+
+  useEffect(() => {
+    async function fetchDynamicPosts() {
+      try {
+        const res = await fetch("/api/blog?status=Published");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+            const mappedDynamic = json.data.map((b: BlogPostItem) => ({
+              title: b.title,
+              slug: b.slug,
+              date: b.publishedAt || b.createdAt
+                ? new Date(b.publishedAt || b.createdAt).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })
+                : "Recent",
+              image: b.thumbnail || "/images/IMG_7098.JPG",
+            }));
+
+            // Merge dynamic posts on top without duplicating existing slugs
+            const existingSlugs = new Set(mappedDynamic.map((d: { slug: string }) => d.slug));
+            const filteredDefaults = defaultBlogPosts.filter(
+              (p) => !existingSlugs.has(p.slug)
+            );
+            setPosts([...mappedDynamic, ...filteredDefaults]);
+          }
+        }
+      } catch (e) {
+        console.error("Error loading blog posts:", e);
+      }
+    }
+
+    fetchDynamicPosts();
+  }, []);
+
   return (
     <div className="bg-white min-h-screen">
-      {/* Top Full-width Banner - spans 100% width and fits 1 screen height */}
+      {/* Top Full-width Banner */}
       <div className="w-full overflow-hidden bg-neutral-900">
         <Image
           src="/images/xon_blog_banner.jpg"
@@ -57,20 +92,20 @@ export default function BlogIndexPage() {
         {/* News Heading */}
         <div className="text-center mb-10">
           <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wide text-neutral-900">
-            News
+            News & Editorial
           </h2>
         </div>
 
-        {/* 3-Column Blog Grid (1 column on mobile/tablet, 3 on desktop) */}
+        {/* 3-Column Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts.map((post) => (
+          {posts.map((post) => (
             <article
               key={post.slug}
               className="group flex flex-col bg-white overflow-hidden"
             >
               {/* Square Image Box */}
               <div className="relative aspect-square w-full overflow-hidden bg-neutral-50 rounded-xs">
-                <Link href={`/${post.slug}`} className="block w-full h-full">
+                <Link href={`/blog/${post.slug}`} className="block w-full h-full">
                   <Image
                     src={post.image}
                     alt={post.title}
@@ -85,7 +120,7 @@ export default function BlogIndexPage() {
               <div className="pt-4 pb-2 flex-1 flex flex-col justify-between">
                 <div>
                   <h3 className="text-sm sm:text-base font-bold text-neutral-900 uppercase leading-snug line-clamp-2 group-hover:text-rose-700 transition-colors">
-                    <Link href={`/${post.slug}`}>{post.title}</Link>
+                    <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                   </h3>
                   <div className="text-xs text-neutral-400 mt-1.5 font-normal">
                     {post.date}
@@ -95,7 +130,7 @@ export default function BlogIndexPage() {
 
                 <div className="pt-1">
                   <Link
-                    href={`/${post.slug}`}
+                    href={`/blog/${post.slug}`}
                     className="inline-block text-xs font-semibold uppercase tracking-wider text-neutral-800 hover:text-black border-b border-black pb-0.5 transition-colors"
                   >
                     Read more
@@ -109,3 +144,4 @@ export default function BlogIndexPage() {
     </div>
   );
 }
+

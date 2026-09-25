@@ -87,7 +87,7 @@ export function CartDrawer() {
                       <div className="flex items-center border border-gray-200 rounded-md">
                         <button
                           onClick={() => updateQuantity(item.id, -1)}
-                          className="p-1 hover:bg-gray-100 text-gray-600"
+                          className="p-1 hover:bg-gray-100 text-gray-600 cursor-pointer"
                         >
                           <Minus className="w-3.5 h-3.5" />
                         </button>
@@ -95,15 +95,26 @@ export function CartDrawer() {
                           {item.quantity}
                         </span>
                         <button
+                          disabled={item.quantity >= (item.maxStock ?? 99)}
                           onClick={() => updateQuantity(item.id, 1)}
-                          className="p-1 hover:bg-gray-100 text-gray-600"
+                          className="p-1 hover:bg-gray-100 text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                          title={
+                            item.quantity >= (item.maxStock ?? 99)
+                              ? `Maximum available stock reached (${item.maxStock ?? 99} items)`
+                              : ""
+                          }
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
                       </div>
+                      {item.quantity >= (item.maxStock ?? 99) && (
+                        <span className="text-[10px] text-amber-600 font-medium">
+                          Max ({item.maxStock})
+                        </span>
+                      )}
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors"
+                        className="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors cursor-pointer ml-auto"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>Remove</span>
