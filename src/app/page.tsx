@@ -9,10 +9,38 @@ import { type Product } from "@/components/ProductCard";
 import { mapApiProduct } from "@/lib/productMapper";
 import { Star } from "lucide-react";
 
+const heroVideos = [
+  {
+    src: "/videos/1K34PRO8E_DMCL0D.mp4",
+    poster: "/images/IMG_7101.JPG",
+  },
+  {
+    src: "/videos/1K34PRO84_DMCL0D.mp4",
+    poster: "/images/IMG_7098.JPG",
+  },
+  {
+    src: "/videos/1K34PRO8K_DMCL0D.mp4",
+    poster: "/images/IMG_7099.JPG",
+  },
+];
+
 export default function HomePage() {
+  const [heroVideoIndex, setHeroVideoIndex] = useState(0);
+  const heroVideoRef = React.useRef<HTMLVideoElement>(null);
+
   const [productsList, setProductsList] = useState<Product[]>(() =>
     (productsData as any[]).map(mapApiProduct)
   );
+
+  const handleHeroVideoEnded = () => {
+    setHeroVideoIndex((prev) => (prev + 1) % heroVideos.length);
+  };
+
+  useEffect(() => {
+    if (heroVideoRef.current) {
+      heroVideoRef.current.play().catch(() => {});
+    }
+  }, [heroVideoIndex]);
 
   useEffect(() => {
     async function loadLiveProducts() {
@@ -40,41 +68,62 @@ export default function HomePage() {
       {/* 1. HERO VIDEO BANNER (16:9 ratio exactly as Flatsome) */}
       <section className="relative w-full overflow-hidden bg-black aspect-video max-h-[calc(100vh-125px)]">
         <video
+          ref={heroVideoRef}
+          key={heroVideos[heroVideoIndex].src}
           autoPlay
-          loop
           muted
           playsInline
           controls={false}
           disablePictureInPicture
           disableRemotePlayback
-          poster="/images/IMG_7101.JPG"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+          poster={heroVideos[heroVideoIndex].poster}
+          onEnded={handleHeroVideoEnded}
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none transition-opacity duration-500"
         >
-          <source src="/videos/1K34PRO8E_DMCL0D.mp4" type="video/mp4" />
+          <source src={heroVideos[heroVideoIndex].src} type="video/mp4" />
         </video>
 
         {/* 30% Dark overlay */}
         <div className="absolute inset-0 bg-black/30 pointer-events-none" />
 
-        {/* Buttons at bottom (y90) */}
-        <div className="absolute bottom-6 sm:bottom-12 inset-x-0 z-10 flex items-center justify-start max-w-7xl mx-auto px-6 sm:px-12 gap-3 sm:gap-4">
-          <Link
-            href="/shop"
-            className="px-6 sm:px-8 py-2.5 sm:py-3.5 border-2 border-white text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-white hover:text-black transition-colors shadow-lg"
-          >
-            SHOP NOW
-          </Link>
-          <a
-            href="tel:+16892128888"
-            className="px-6 sm:px-8 py-2.5 sm:py-3.5 bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-lg transition-colors shadow-lg"
-          >
-            CALL NOW
-          </a>
+        {/* Buttons and slide indicators at bottom */}
+        <div className="absolute bottom-6 sm:bottom-12 inset-x-0 z-10 flex items-center justify-between max-w-7xl mx-auto px-6 sm:px-12 gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Link
+              href="/shop"
+              className="px-6 sm:px-8 py-2.5 sm:py-3.5 border-2 border-white text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-white hover:text-black transition-colors shadow-lg"
+            >
+              SHOP NOW
+            </Link>
+            <a
+              href="tel:+16892128888"
+              className="px-6 sm:px-8 py-2.5 sm:py-3.5 bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-lg transition-colors shadow-lg"
+            >
+              CALL NOW
+            </a>
+          </div>
+
+          {/* Video Indicators */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {heroVideos.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setHeroVideoIndex(idx)}
+                aria-label={`Switch to video ${idx + 1}`}
+                className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 cursor-pointer pointer-events-auto ${
+                  idx === heroVideoIndex
+                    ? "w-6 sm:w-8 bg-white shadow"
+                    : "w-2 bg-white/50 hover:bg-white/80"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
       {/* 2. THREE-VIDEO FULL-WIDTH STRIP - FLUSH / ZERO GAP */}
-      <section className="w-full bg-black overflow-hidden p-0 m-0">
+      <section className="hidden md:block w-full bg-black overflow-hidden p-0 m-0">
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-0 p-0 m-0">
           {/* Video 1 */}
           <div className="relative aspect-[9/16] w-full overflow-hidden bg-black pointer-events-none">
