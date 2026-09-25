@@ -361,16 +361,16 @@ export default function HomePage() {
             unoptimized
           />
           <div className="absolute inset-0 flex items-start justify-end px-6 sm:px-12 md:px-16 lg:px-24 pt-8 sm:pt-12 md:pt-16 lg:pt-20 pointer-events-none">
-            <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4 pointer-events-auto">
-              <h2 className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase tracking-tight text-black font-serif">
-                SHOP US GIRL
+            <div className="text-right space-y-3 sm:space-y-4 pointer-events-auto">
+              <h2 className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase tracking-tight text-black font-sans">
+                SHOP US IRL
               </h2>
               <div>
                 <a
                   href="https://www.google.com/maps/place/3168+Bill+Beck+Blvd,+Kissimmee,+FL+34744,+Hoa+K%E1%BB%B3/@28.3421851,-81.384924,96m/data=!3m1!1e3!4m6!3m5!1s0x88dd86f7f805bafd:0x719187b51bbcb7ff!8m2!3d28.3423066!4d-81.3845875!16s%2Fg%2F11bw40bzvw!5m1!1e1?entry=ttu&g_ep=EgoyMDI2MDkyMS4wIKXMDSoASAFQAw%3D%3D"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block px-7 py-3 bg-black hover:bg-neutral-800 text-white text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-sm transition-colors shadow-md"
+                  className="inline-block px-7 py-3 bg-black hover:bg-neutral-800 text-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors shadow-md"
                 >
                   FIND US
                 </a>
