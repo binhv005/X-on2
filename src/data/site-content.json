@@ -1,0 +1,281 @@
+{
+  "reviews": [
+    {
+      "author": "Constance Williams",
+      "text": "This is a very pleasant place the service is amazing The Ower and  her assist Palace this is truly a 5 Star experience. Constance Lacy Williams",
+      "date": "Recently",
+      "rating": 5
+    },
+    {
+      "author": "Gwen Ivery",
+      "text": "I Pay only $35 and my Nails are so pretty. No drilling Chemical no UV light Very healthy for your nails and quick But still beautiful as if I paid $80 but I only paid $35. They have over 1000 designs and they are so gorgeous. I only stayed about 15 minutes in the shop. Check them out you won’t regret it! I will be back!",
+      "date": "Recently",
+      "rating": 5
+    },
+    {
+      "author": "Mrs. Perry",
+      "text": "Awesome service, fast and I love my NAILS!!!",
+      "date": "Recently",
+      "rating": 5
+    },
+    {
+      "author": "Robin Richardson",
+      "text": "I walked in and was able to get my nails done. They are new to the area and I am beyond pleased. They do not use UV light or harsh chemicals. Stephanie is amazing. I will definitely be coming back",
+      "date": "Recently",
+      "rating": 5
+    },
+    {
+      "author": "Viviana Rodriguez",
+      "text": "Great product.",
+      "date": "Recently",
+      "rating": 5
+    },
+    {
+      "author": "Frank Baurgh",
+      "text": "I’ve tried so many press-ons before, but X-ON’s are truly salon-quality maybe even better than some sets I’ve paid for in person. The designs are detailed, sturdy, and look professionally done. Their nail glue has an amazing hold and kept my nails secure for days. So convenient and worth it!",
+      "date": "Recently",
+      "rating": 5
+    },
+    {
+      "author": "mike tran",
+      "text": "So excited for X-ON Nail Studio’s grand opening on February 19th! The salon looks beautiful, clean, and so professional. Their handmade nail designs are absolutely stunning and super detailed. Houston definitely needed a spot like this  can’t wait to come support!",
+      "date": "Recently",
+      "rating": 5
+    }
+  ],
+  "homeVideos": [
+    {
+      "videoSrc": "/videos/ID2708_lalafolie2.mp4",
+      "link": "/shop/",
+      "title": "",
+      "description": ""
+    },
+    {
+      "videoSrc": "/videos/download-2.mp4",
+      "link": "/",
+      "title": "COLD GEL GLUE",
+      "description": ""
+    },
+    {
+      "videoSrc": "/videos/Apply-Nail-Glue-remover.mp4",
+      "link": "/",
+      "title": "Pro-Hold Glue &#038; Magic Remover Kit",
+      "description": ""
+    },
+    {
+      "videoSrc": "/videos/remover.mp4",
+      "link": "/",
+      "title": "HOW TO REMOVE",
+      "description": ""
+    },
+    {
+      "videoSrc": "/videos/videolalasignature.mp4",
+      "link": "/",
+      "title": "",
+      "description": ""
+    }
+  ],
+  "aboutContent": {
+    "title": "About X-ON",
+    "images": []
+  },
+  "sizingChart": {
+    "title": "Nail Sizing Guide & Chart",
+    "images": [
+      "/images/unnamed.webp",
+      "/images/unnamed.webp",
+      "/images/il_794xN.6709088186_npwh.webp",
+      "/images/ChatGPT-Image-Jul-13-2026-05_33_06-PM.png",
+      "/images/pearlsplease-ad029d8087d848db86e130f9a061103e.webp",
+      "/images/ChatGPT-Image-18_51_04-20-thg-7-2026.png",
+      "/images/ChatGPT-Image-18_58_00-20-thg-7-2026-1024x409.png",
+      "/images/ChatGPT-Image-19_11_41-20-thg-7-2026-1024x992.png",
+      "/images/ChatGPT-Image-19_24_29-20-thg-7-2026-1024x1024.png",
+      "/images/1adfa597-e3d5-4214-aba5-40377e6f0ddc.png"
+    ]
+  },
+  "blogPosts": [
+    {
+      "slug": "extra-long-handmade-nail-luxury",
+      "title": "EXTRA-LONG HANDMADE NAIL LUXURY",
+      "date": "July 22, 2026",
+      "image": "/images/IMG_7098.JPG",
+      "paragraphs": [
+        "Some nails are just an accessory. Others are wearable art. The X-ON Signature Collection belongs firmly to the second category — an extra-long, handmade luxury nail line designed to stay ahead of the market, in exclusive shapes and designs you will only find at X-ON.",
+        "Every design is hand-crafted by our artists, down to the smallest detail. Here is what is inside the collection:",
+        "The entire Signature Collection is built on professional gel and premium acrylic powder — the two materials responsible for durability, flexibility, and a natural fit against your real nail.",
+        "A premium high-gloss top coat locks in true color, resists scratching, and holds its shine. Every crystal, foil detail, and 3D charm is hand-set and built to stay put. That is how an X-ON set can look like it just walked out of America’s best salon — while you wear it at home.",
+        "Handmade nails are not rare in the U.S. market — but most stop at safe, easy-to-mass-produce designs. X-ON goes the other direction: every design in the Signature Collection is exclusive and one-of-a-kind, developed by our team ahead of the trend curve rather than in response to it.",
+        "We believe X-ON’s designs lead the U.S. market in creativity, detail, and finish quality — and that is something our customers will not find anywhere else.",
+        "AT THE SALON: ~2 HRS in the chair, for a cost of up to ",
+        "WITH X-ON: ~15 MIN at home, at a fraction of the cost",
+        "The same standout look — sometimes even more detailed and unique — thanks to Cold Gel Glue’s no-UV, no-filing, no-lamp application. The quality still matches a top U.S. salon."
+      ],
+      "excerpt": "Some nails are just an accessory. Others are wearable art. The X-ON Signature Collection belongs firmly to the second category — an extra-long, handmade luxury nail line designed to stay ahead of the market, in exclusive shapes and designs you will only find at X-ON."
+    },
+    {
+      "slug": "salon-quality-handmade-nails-reimagined-for-home",
+      "title": "SALON-QUALITY HANDMADE NAILS, REIMAGINED FOR HOME",
+      "date": "July 22, 2026",
+      "image": "/images/IMG_7099.JPG",
+      "paragraphs": [
+        "Most press-on nails are mass-produced: molded in plastic, stamped with pre-printed designs. Convenient, sure — but look closely and they tend to read flat, uneven in thickness, and prone to snapping. That rigid, off-the-shelf material cannot hug the natural curve of your nail, so it lifts early, wears out fast, and never quite feels comfortable.",
+        "X-ON takes the opposite approach. Every set is hand-crafted, nail by nail, using professional-grade gel and premium acrylic powder — for a look that is realistic, refined, and genuinely salon-caliber. That is the difference between an assembly-line product and a piece made by hand.",
+        "The X-ON signature — our best-selling nail system.",
+        "We obsess over quality and detail so every customer gets a salon-level manicure experience without leaving the house. Ready to ship from our U.S. stock — order today, and it can be on its way tomorrow.",
+        "Our next-generation nail adhesive, exclusive to X-ON.",
+        "Paired with Grip-X Nails is Cold Gel Glue, X-ON proprietary adhesive built specifically for handmade nail sets — the piece that makes at-home application fast, safe, and salon-durable.",
+        "✦ Pro tip: apply a small amount and press firmly for about 20 seconds for the strongest bond.",
+        "Our collections track today’s biggest trends — from elegant nudes and cat-eye finishes to chrome and 3D nail art, plus our elevated handmade luxury sets.",
+        "Sizing: S, M, L (true to U.S. sizing) • Length: short, medium, long • Shape: a wide range of options for every hand."
+      ],
+      "excerpt": "Most press-on nails are mass-produced: molded in plastic, stamped with pre-printed designs. Convenient, sure — but look closely and they tend to read flat, uneven in thickness, and prone to snapping."
+    },
+    {
+      "slug": "apply-gripx-nails",
+      "title": "How to Have Beautiful Nails in Less Than 10 Minutes",
+      "date": "December 10, 2025",
+      "image": "/images/IMG_7100.JPG",
+      "paragraphs": [
+        "Learn the 4 easy steps to apply your X-ON Grip-X nails for 3-4 week wear.",
+        "Step 1: Prep your natural nails by gently pushing back cuticles and lightly buffing the nail surface.",
+        "Step 2: Wipe clean with an alcohol pad to remove dust and oils.",
+        "Step 3: Apply a small drop of Cold Gel Glue to the base of the Grip-X nail.",
+        "Step 4: Press firmly onto your natural nail at a 45-degree angle and hold for 20 seconds. Repeat for all nails!"
+      ],
+      "excerpt": "Learn the 4 easy steps to apply your X-ON Grip-X nails in less than 10 minutes."
+    },
+    {
+      "slug": "post-1",
+      "title": "Salon-Quality Beauty, Reimagined for Modern Life",
+      "date": "December 10, 2025",
+      "image": "/images/IMG_7101.JPG",
+      "paragraphs": [
+        "The beauty industry is evolving fast. Clients want results that look premium — without spending hours, damaging their nails, or compromising comfort.",
+        "At La La Folie, we design beauty solutions that combine luxury, safety, and efficiency — for both professionals and everyday users.",
+        "✔ Salon-quality finish",
+        "✔ Lightweight & natural look",
+        "✔ Lasts up to 2+ weeks",
+        "✔ Saves time and money",
+        "La La Folie products are developed with industry experience, focusing on safety, comfort, and long-term value — not shortcuts.",
+        "Discover a smarter way to experience luxury beauty."
+      ],
+      "excerpt": "The beauty industry is evolving fast. Clients want results that look premium — without spending hours, damaging their nails, or compromising comfort."
+    }
+  ],
+  "galleryItems": [
+    "/images/unnamed.webp",
+    "/images/il_794xN.6709088186_npwh.webp",
+    "/images/ChatGPT-Image-Jul-13-2026-05_33_06-PM.png",
+    "/images/pearlsplease-ad029d8087d848db86e130f9a061103e.webp",
+    "/images/ChatGPT-Image-18_01_52-20-thg-7-2026.png",
+    "/images/72e50927d57303f991f3bc43e2095004ddcaa4f4-600x600.jpg",
+    "/images/fad1c9126216019f1f675c834f140c77269a6222-600x600.jpg",
+    "/images/3d95eed710dfa13bddc96e9b6e2ad3c7f6cf3bc2-600x600.jpg",
+    "/images/19cb2ee4dc788647140c6939ef585b8bef89e7f9-600x600.jpg",
+    "/images/0c9c6cdbf09d2d9bbf1f1fa850e7fbcc49b3a23a-600x600.jpg",
+    "/images/589b16b378cf25a019560e23cce51d0f30d6f9ca-600x600.jpg",
+    "/images/3fbddc24fb664c05f18a2fc373bb6062c31a600a-600x600.jpg",
+    "/images/fece9082b666d603949b6e1d7b7f255bbcfecee7-600x600.jpg",
+    "/images/2ba9d94380751568782a3fc9c00c2883117cf462-600x600.jpg",
+    "/images/e7d8ca46193b3afdc6c8b435454b9dfe394070ce-600x600.jpg",
+    "/images/e1fea31055cdb66cd7a61a4ab7ad20927f8799d6-600x600.jpg",
+    "/images/5886caafeabaf7aa3e0ff755aca8560ea8bb11f9-600x600.jpg",
+    "/images/c1ece7fff1fe2e4cf5045200c588d7a6ae2290dd-600x600.jpg",
+    "/images/f767c7d42cde7ec5f45885eeb3fbc45abc1688dd-600x600.jpg",
+    "/images/26c42d2302e7108994090ffe7833a81d75edb304-600x600.jpg",
+    "/images/b773e6355ab8a680d64cbc8eb12860e1eb4d25cb-600x600.jpg",
+    "/images/9b912a4205cbf2bcab827ba501196d9ce4385faf-600x600.jpg",
+    "/images/67ce74abe32e88a20682f108a086dc4f40e0a610-600x600.jpg",
+    "/images/ca35bab4ee35a77bebbb52c0e1b790eeaf2e0f5d-600x600.jpg",
+    "/images/4695fe830e32c2e93ae214f70d255c4e98b5a519-600x600.jpg",
+    "/images/48a6d01a810704e0d7cdcdbbe161cb649e312874-600x600.jpg",
+    "/images/6b2e68d4f3da09771238a3119214a9a2191bb67c-600x600.jpg",
+    "/images/771cf364f8586fd653fafde30d2b54234d9f082b-600x600.jpg",
+    "/images/02f646c1a8c1a516ea418b9fa84660cc2905bbce-600x600.jpg",
+    "/images/e67f4206ca9f92b4999c783e2546eb9db7bb841b-600x600.jpg",
+    "/images/721897f1bed287de608a90f58576ea01f7023be2-600x600.jpg",
+    "/images/7047f62761c1edbf58a750b781ac43110f1a6827-600x600.jpg",
+    "/images/469f063b8ce2a62f55a4b0b70582c01bcb29a8ef-600x600.jpg",
+    "/images/c2603064f00a9b665de023173fa09e18ce3af4e6-600x600.jpg",
+    "/images/f7cd7d4ff52fdadc0c7b576b460ef73d6a9d252c-600x600.jpg",
+    "/images/a940c1a5937d0653f61c2ded47b95dfa0bb225c9-600x600.jpg",
+    "/images/99963462ab67fa50f654ad9242fd2a4fd3583d75-600x600.jpg",
+    "/images/2ab252215678104ba11dac81c856a65caf5b9bd3-600x600.jpg",
+    "/images/477122e4a03bd0449bb89fa506fea22315787a56-600x600.jpg",
+    "/images/39955ecc93f9a0fb88b0b8a7aad71967058b0902-600x600.jpg",
+    "/images/dae7925b717132567924f6082baf905011bd12b2-600x600.jpg",
+    "/images/ed2279f22d0525c72a9c615d342198cbc3f1a476-600x600.jpg",
+    "/images/338f480de23a5deea6a41923458dc8938a234741-600x600.jpg",
+    "/images/c96ae9e066465ebfb1192c858940e6e41b690b1e-600x600.jpg",
+    "/images/cff659b85f35860fad14e158eaa890c9935566ea-600x600.jpg",
+    "/images/989ea9e3def4902932e622e02de002b949f02a7c-600x600.jpg",
+    "/images/d1cc056daee0c7f7906578f0a746e2029eed77f2-600x600.jpg",
+    "/images/a297c73f83b6c37c1c82c05042e4e1f049dc5d5c-600x600.jpg",
+    "/images/67230774cbe03c7c502976aea4c4df29bc263da3-600x600.jpg",
+    "/images/6c7fb1142690b6bad12223255b8a24882bc77941-600x600.jpg",
+    "/images/cd2ce02427111ed85d7426fdca9cdf08095befb2-600x600.jpg",
+    "/images/798259a5626bb6ccad0f5467c8c648dbefce6015-600x600.jpg",
+    "/images/bde0fabf0c87da7c271992966d259bc2df01d601-600x600.jpg",
+    "/images/6d128da3743316bfcd0836955b707ced417e0918-600x600.jpg",
+    "/images/a005bddf731c923b0d317079c563aba830ebbffb-600x600.jpg"
+  ],
+  "categories": [
+    {
+      "id": "handmade-grip-x-nails",
+      "name": "Handmade Grip-X Nails",
+      "slug": "handmade-grip-x-nails",
+      "url": "/product-category/product-type/handmade-grip-x-nails",
+      "description": "Exclusive handmade press-on nails with patented Grip-X technology for natural feel and durability."
+    },
+    {
+      "id": "cold-gel-glue",
+      "name": "Cold Gel Glue",
+      "slug": "cold-gel-glue",
+      "url": "/product-category/product-type/cold-gel-glue",
+      "description": "Next generation cold gel nail glue. Strong hold, non-damaging, easy application."
+    },
+    {
+      "id": "cold-gel-remover",
+      "name": "Cold Gel Remover",
+      "slug": "cold-gel-remover",
+      "url": "/product-category/product-type/cold-gel-remover",
+      "description": "Gentle, fast-acting remover formula for safe nail removal without soaking in harsh acetone."
+    },
+    {
+      "id": "best-seller",
+      "name": "Best Seller",
+      "slug": "best-seller",
+      "url": "/product-category/product-type/best-seller",
+      "description": "Our top-rated and trending styles loved by thousands of nail enthusiasts."
+    },
+    {
+      "id": "3d",
+      "name": "3D Theme",
+      "slug": "3d",
+      "url": "/product-category/design-theme/3d",
+      "description": "Intricate 3D sculpted nail art, pearls, gemstones and luxury textures."
+    },
+    {
+      "id": "flower",
+      "name": "Flower Theme",
+      "slug": "flower",
+      "url": "/product-category/design-theme/flower",
+      "description": "Delicate floral patterns, hand-painted blossoms and botanical accents."
+    },
+    {
+      "id": "y2k",
+      "name": "Y2K Theme",
+      "slug": "y2k",
+      "url": "/product-category/design-theme/y2k",
+      "description": "Vibrant cyberpunk, chrome, futuristic aesthetic inspired by 2000s fashion."
+    },
+    {
+      "id": "bundle-and-save",
+      "name": "Bundle & Save",
+      "slug": "bundle-and-save",
+      "url": "/bundle-and-save",
+      "description": "Exclusive combo packs and bundle discounts for the ultimate nail collection."
+    }
+  ]
+}
