@@ -61,7 +61,7 @@ export function Header() {
             <Link
               href="/"
               onClick={handleLinkClick}
-              className="relative block h-11 sm:h-13 md:h-14 w-28 sm:w-36 md:w-40 lg:w-44 transition-transform hover:scale-105"
+              className="relative block h-8 sm:h-9 md:h-10 w-20 sm:w-26 md:w-28 lg:w-32 transition-transform hover:scale-105"
             >
               <Image
                 src="/images/logo-xon.png"

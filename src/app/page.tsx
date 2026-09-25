@@ -361,7 +361,7 @@ export default function HomePage() {
             unoptimized
           />
           <div className="absolute inset-0 flex items-start justify-end px-6 sm:px-12 md:px-16 lg:px-24 pt-8 sm:pt-12 md:pt-16 lg:pt-20 pointer-events-none">
-            <div className="text-right space-y-3 sm:space-y-4 pointer-events-auto">
+            <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4 pointer-events-auto">
               <h2 className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase tracking-tight text-black font-serif">
                 SHOP US GIRL
               </h2>
