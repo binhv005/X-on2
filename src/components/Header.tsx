@@ -41,7 +41,7 @@ export function Header() {
     <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-xs">
       {/* Top Header Row: Hamburger - Logo - Icons */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative flex items-center justify-between h-24 sm:h-28">
+        <div className="relative flex items-center justify-between h-20 sm:h-24">
           {/* Left: Mobile hamburger - only on mobile/tablet */}
           <div className="flex items-center lg:hidden">
             <button
@@ -61,7 +61,7 @@ export function Header() {
             <Link
               href="/"
               onClick={handleLinkClick}
-              className="relative block h-20 sm:h-24 w-52 sm:w-64 lg:w-72 transition-transform hover:scale-105"
+              className="relative block h-15 sm:h-18 w-40 sm:w-48 lg:w-56 transition-transform hover:scale-105"
             >
               <Image
                 src="/images/logo-xon.png"
