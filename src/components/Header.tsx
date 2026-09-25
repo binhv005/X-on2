@@ -39,8 +39,8 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-xs relative overflow-hidden">
-      {/* Decorative Silk Ribbon Waves & Pearls on Left & Right sides */}
-      <div className="absolute left-0 top-0 bottom-0 w-[36%] max-w-[460px] h-full pointer-events-none select-none z-0">
+      {/* Decorative Red Wave Curves on Left & Right sides */}
+      <div className="absolute left-0 top-0 bottom-0 w-[35%] max-w-[420px] h-full pointer-events-none select-none z-0 opacity-85">
         <Image
           src="/images/decorations/header-ribbon-left.png"
           alt=""
@@ -49,7 +49,7 @@ export function Header() {
           className="object-contain object-left"
         />
       </div>
-      <div className="absolute right-0 top-0 bottom-0 w-[36%] max-w-[460px] h-full pointer-events-none select-none z-0">
+      <div className="absolute right-0 top-0 bottom-0 w-[35%] max-w-[420px] h-full pointer-events-none select-none z-0 opacity-85">
         <Image
           src="/images/decorations/header-ribbon-right.png"
           alt=""
