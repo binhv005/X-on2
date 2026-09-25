@@ -137,6 +137,7 @@ export default function HomePage() {
             src="/images/decorations/rose-bloom.png"
             alt=""
             fill
+            sizes="256px"
             className="object-contain"
           />
         </div>
@@ -145,6 +146,7 @@ export default function HomePage() {
             src="/images/decorations/daisy-cluster.png"
             alt=""
             fill
+            sizes="288px"
             className="object-contain"
           />
         </div>
@@ -153,6 +155,7 @@ export default function HomePage() {
             src="/images/decorations/gold-scissors.png"
             alt=""
             fill
+            sizes="192px"
             className="object-contain"
           />
         </div>
@@ -161,6 +164,7 @@ export default function HomePage() {
             src="/images/decorations/polish-bottle.png"
             alt=""
             fill
+            sizes="192px"
             className="object-contain"
           />
         </div>
@@ -177,11 +181,12 @@ export default function HomePage() {
             {handmadeNails.map((prod) => (
               <div key={prod.id} className="group flex flex-col bg-white rounded-lg p-3 shadow-xs border border-[#eedad7] hover:shadow-md transition-shadow">
                 <div className="relative aspect-square w-full overflow-hidden bg-neutral-100 rounded-md">
-                  <Link href={`/product/${prod.slug}`}>
+                  <Link href={`/product/${prod.slug}`} className="relative block w-full h-full">
                     <Image
                       src={prod.image}
                       alt={prod.title}
                       fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </Link>
@@ -217,6 +222,7 @@ export default function HomePage() {
             src="/images/decorations/petals-scatter.png"
             alt=""
             fill
+            sizes="272px"
             className="object-contain"
           />
         </div>
@@ -225,6 +231,7 @@ export default function HomePage() {
             src="/images/decorations/pink-brush.png"
             alt=""
             fill
+            sizes="256px"
             className="object-contain"
           />
         </div>
@@ -233,6 +240,7 @@ export default function HomePage() {
             src="/images/decorations/daisy-rose-sprig.png"
             alt=""
             fill
+            sizes="240px"
             className="object-contain"
           />
         </div>
@@ -241,6 +249,7 @@ export default function HomePage() {
             src="/images/decorations/gold-stars.png"
             alt=""
             fill
+            sizes="224px"
             className="object-contain"
           />
         </div>
@@ -260,11 +269,12 @@ export default function HomePage() {
                   <span className="absolute top-2 left-2 z-10 bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
                     {idx % 2 === 0 ? "17% OFF" : "25% OFF"}
                   </span>
-                  <Link href={`/product/${prod.slug}`}>
+                  <Link href={`/product/${prod.slug}`} className="relative block w-full h-full">
                     <Image
                       src={prod.image}
                       alt={prod.title}
                       fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </Link>
@@ -299,6 +309,7 @@ export default function HomePage() {
             src="/images/decorations/rose-bloom.png"
             alt=""
             fill
+            sizes="272px"
             className="object-contain"
           />
         </div>
@@ -307,6 +318,7 @@ export default function HomePage() {
             src="/images/decorations/chamomile-sprig.png"
             alt=""
             fill
+            sizes="224px"
             className="object-contain"
           />
         </div>
@@ -315,6 +327,7 @@ export default function HomePage() {
             src="/images/decorations/gold-scissors.png"
             alt=""
             fill
+            sizes="192px"
             className="object-contain"
           />
         </div>
@@ -323,6 +336,7 @@ export default function HomePage() {
             src="/images/decorations/petals-scatter.png"
             alt=""
             fill
+            sizes="272px"
             className="object-contain"
           />
         </div>

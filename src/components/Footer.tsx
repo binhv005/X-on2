@@ -46,6 +46,7 @@ export function Footer() {
                 alt="X-ON"
                 fill
                 unoptimized
+                sizes="320px"
                 className="object-contain object-left"
               />
             </Link>

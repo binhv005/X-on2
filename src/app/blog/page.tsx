@@ -105,7 +105,7 @@ export default function BlogIndexPage() {
             >
               {/* Square Image Box */}
               <div className="relative aspect-square w-full overflow-hidden bg-neutral-50 rounded-xs">
-                <Link href={`/blog/${post.slug}`} className="block w-full h-full">
+                <Link href={`/blog/${post.slug}`} className="relative block w-full h-full">
                   <Image
                     src={post.image}
                     alt={post.title}

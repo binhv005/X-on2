@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, use } from "react";
+import React, { useState, use, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -29,10 +29,18 @@ export default function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = use(params);
-  const slug = resolvedParams.slug;
+  const rawSlug = resolvedParams.slug;
+  const decodedSlug = decodeURIComponent(rawSlug).toLowerCase().trim();
 
-  const staticProduct = (productsData as Product[]).find((p) => p.slug === slug);
+  // Find static product fallback if available
+  const staticProduct = (productsData as Product[]).find((p) => {
+    const s = (p.slug || "").toLowerCase().trim();
+    const id = (p.id || "").toLowerCase().trim();
+    return s === decodedSlug || id === decodedSlug || s === rawSlug.toLowerCase() || id === rawSlug.toLowerCase();
+  });
+
   const { addItem } = useCart();
+  const thumbnailScrollRef = useRef<HTMLDivElement>(null);
   const [selectedSize, setSelectedSize] = useState<string>("M");
   const [quantity, setQuantity] = useState<number>(1);
   const [added, setAdded] = useState(false);
@@ -42,32 +50,36 @@ export default function ProductDetailPage({
   const [activeImage, setActiveImage] = useState<string>("");
 
   // Fetch live product from API to get exact product & stock from DataStore
-  React.useEffect(() => {
+  useEffect(() => {
+    let isMounted = true;
     async function fetchLiveProduct() {
       try {
-        const res = await fetch(`/api/products/${slug}`);
+        const res = await fetch(`/api/products/${encodeURIComponent(rawSlug)}`);
         if (res.ok) {
           const json = await res.json();
-          if (json.success && json.data) {
+          if (json.success && json.data && isMounted) {
             setProductDetails(json.data);
             if (typeof json.data.stock === "number") {
               setStock(json.data.stock);
             }
-          } else if (!staticProduct) {
-            setNotFoundState(true);
           }
-        } else if (!staticProduct) {
+        } else if (!staticProduct && isMounted) {
           setNotFoundState(true);
         }
       } catch (err) {
         console.error("Error fetching live product stock:", err);
-        if (!staticProduct) setNotFoundState(true);
+        if (!staticProduct && isMounted) {
+          setNotFoundState(true);
+        }
       }
     }
     fetchLiveProduct();
-  }, [slug, staticProduct]);
+    return () => {
+      isMounted = false;
+    };
+  }, [rawSlug, staticProduct]);
 
-  if (notFoundState) {
+  if (notFoundState && !staticProduct && !productDetails) {
     notFound();
   }
 
@@ -78,11 +90,18 @@ export default function ProductDetailPage({
     { label: "L", desc: "17 · 13 · 14 · 13 · 10 mm" },
   ];
 
-  const relatedProducts = productsData
-    .filter((p) => p.slug !== slug)
-    .slice(0, 4);
-
   const raw = productDetails || staticProduct;
+
+  const scrollThumbnails = (direction: "left" | "right") => {
+    if (thumbnailScrollRef.current) {
+      const scrollAmount = 200;
+      thumbnailScrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   if (!raw) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -92,8 +111,8 @@ export default function ProductDetailPage({
   }
 
   const product: Product = {
-    id: raw.id || raw.slug || slug,
-    slug: raw.slug || slug,
+    id: raw.id || raw.slug || rawSlug,
+    slug: raw.slug || rawSlug,
     title: raw.name || raw.title || "X-ON Nails",
     price:
       typeof raw.price === "number"
@@ -115,7 +134,7 @@ export default function ProductDetailPage({
       raw.image ||
       "/images/IMG_7098.JPG",
     category: raw.category || "Handmade Grip-X Nails",
-    url: `/product/${slug}`,
+    url: `/product/${raw.slug || rawSlug}`,
     description: raw.description || "",
     stock: stock,
   };
@@ -124,17 +143,6 @@ export default function ProductDetailPage({
     ? raw.images 
     : [raw.thumbnail || raw.image || product.image].filter(Boolean);
   const galleryImages: string[] = Array.from(new Set(rawImagesList.filter(Boolean)));
-
-  const thumbnailScrollRef = React.useRef<HTMLDivElement>(null);
-  const scrollThumbnails = (direction: "left" | "right") => {
-    if (thumbnailScrollRef.current) {
-      const scrollAmount = 200;
-      thumbnailScrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
 
   const handleAddToCart = () => {
     if (stock <= 0) return;
@@ -154,6 +162,10 @@ export default function ProductDetailPage({
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
+
+  const relatedProducts = (productsData as Product[])
+    .filter((p) => p.slug !== product.slug && p.id !== product.id)
+    .slice(0, 4);
 
   return (
     <div className="bg-white min-h-screen py-10 sm:py-16">
@@ -184,6 +196,7 @@ export default function ProductDetailPage({
                 alt={product.title}
                 fill
                 priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
               {product.originalPrice && (
@@ -260,6 +273,7 @@ export default function ProductDetailPage({
                           src={img}
                           alt={`${product.title} thumbnail ${idx + 1}`}
                           fill
+                          sizes="88px"
                           className="object-cover"
                         />
                       </button>
@@ -283,32 +297,30 @@ export default function ProductDetailPage({
           {/* Right: Product Info & Purchase Options */}
           <div className="flex flex-col space-y-6">
             <div>
-              {product.category && (
-                <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">
-                  {product.category}
-                </span>
-              )}
-              <h1 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-gray-950 mt-1 font-serif">
+              <span className="text-xs font-bold uppercase tracking-widest text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full">
+                {product.category || "Handmade Grip-X Nails"}
+              </span>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-tight text-gray-950 mt-3 font-serif">
                 {product.title}
               </h1>
 
-              {/* Reviews rating */}
-              <div className="flex items-center gap-2 mt-2">
-                <div className="flex items-center text-amber-400">
+              {/* Rating & Review counter */}
+              <div className="flex items-center gap-2 mt-3">
+                <div className="flex text-amber-400">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-amber-400" />
                   ))}
                 </div>
-                <span className="text-xs text-gray-500 font-medium">
-                  5.0 (Verified Reviews)
+                <span className="text-xs font-semibold text-gray-700">4.9 / 5.0</span>
+                <span className="text-xs text-gray-400">·</span>
+                <span className="text-xs text-gray-500 underline cursor-pointer hover:text-black">
+                  128 Customer Reviews
                 </span>
               </div>
-            </div>
 
-            {/* Pricing & Stock Status */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-gray-100">
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-extrabold text-gray-950">
+              {/* Price & Live Stock */}
+              <div className="flex items-baseline gap-3 mt-4">
+                <span className="text-2xl sm:text-3xl font-bold text-gray-950">
                   {product.price}
                 </span>
                 {product.originalPrice && (
@@ -316,77 +328,73 @@ export default function ProductDetailPage({
                     {product.originalPrice}
                   </span>
                 )}
+                {stock > 0 ? (
+                  <span className="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                    In Stock ({stock} available)
+                  </span>
+                ) : (
+                  <span className="text-xs font-medium text-red-700 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">
+                    Out of Stock
+                  </span>
+                )}
               </div>
-
-              {stock <= 0 ? (
-                <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full">
-                  Out of Stock
-                </span>
-              ) : stock <= 5 ? (
-                <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full animate-pulse">
-                  Only {stock} sets left in stock!
-                </span>
-              ) : (
-                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-                  In Stock ({stock} available)
-                </span>
-              )}
             </div>
 
             {/* Size Selector */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="space-y-3 pt-2">
+              <div className="flex justify-between items-center">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-900">
-                  Select Nail Size
+                  Select Size
                 </label>
                 <Link
                   href="/sizing-chart"
-                  className="text-xs text-neutral-500 hover:text-black underline font-medium"
+                  className="text-xs text-rose-600 hover:underline font-medium"
                 >
-                  View Sizing Guide
+                  Size Guide &amp; Measurement
                 </Link>
               </div>
-
               <div className="grid grid-cols-4 gap-2.5">
                 {sizes.map((s) => (
                   <button
                     key={s.label}
                     type="button"
                     onClick={() => setSelectedSize(s.label)}
-                    className={`py-3 px-2 rounded-lg border text-center transition-all ${
+                    className={`py-2.5 px-3 rounded-xl border text-center transition-all cursor-pointer ${
                       selectedSize === s.label
-                        ? "border-black bg-black text-white shadow-sm"
+                        ? "border-black bg-black text-white shadow-sm ring-1 ring-black"
                         : "border-gray-200 bg-white text-gray-800 hover:border-gray-400"
                     }`}
                   >
-                    <span className="block text-sm font-bold">{s.label}</span>
-                    <span className="block text-[10px] opacity-75 mt-0.5 truncate">
-                      {s.desc}
-                    </span>
+                    <span className="block font-bold text-sm">{s.label}</span>
+                    <span className="block text-[10px] opacity-70 mt-0.5">{s.desc}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Quantity & Add to Cart */}
-            <div className="space-y-4 pt-2">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center border border-gray-300 rounded-md">
+            {/* Quantity Selector & Add to Cart */}
+            <div className="space-y-3 pt-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-900">
+                Quantity
+              </label>
+              <div className="flex gap-4">
+                <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50/50 p-1">
                   <button
-                    disabled={stock <= 0 || quantity <= 1}
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="p-3 hover:bg-gray-100 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                    type="button"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-black hover:bg-white rounded-lg transition-colors cursor-pointer"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="px-4 text-sm font-bold text-gray-900">
-                    {stock <= 0 ? 0 : quantity}
+                  <span className="w-12 text-center font-bold text-sm text-gray-900">
+                    {quantity}
                   </span>
                   <button
-                    disabled={stock <= 0 || quantity >= stock}
-                    onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
-                    className="p-3 hover:bg-gray-100 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                    type="button"
+                    onClick={() => setQuantity(Math.min(stock, quantity + 1))}
+                    disabled={quantity >= stock}
+                    className="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-black hover:bg-white rounded-lg transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     aria-label="Increase quantity"
                   >
                     <Plus className="w-4 h-4" />
@@ -394,39 +402,46 @@ export default function ProductDetailPage({
                 </div>
 
                 <button
-                  disabled={stock <= 0}
+                  type="button"
                   onClick={handleAddToCart}
-                  className={`flex-1 py-3.5 px-6 rounded-md font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${
+                  disabled={stock <= 0}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-md ${
                     stock <= 0
-                      ? "bg-neutral-200 text-neutral-400 cursor-not-allowed border border-neutral-300"
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                       : added
                       ? "bg-emerald-600 text-white"
-                      : "bg-black hover:bg-neutral-800 text-white shadow-lg cursor-pointer"
+                      : "bg-neutral-900 hover:bg-black text-white hover:shadow-lg cursor-pointer"
                   }`}
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                  {stock <= 0 ? "Out of Stock" : added ? "Added to Cart!" : "Add to Cart"}
+                  {added ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 animate-bounce" />
+                      <span>Added to Bag!</span>
+                    </>
+                  ) : stock <= 0 ? (
+                    <span>Sold Out</span>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-4 h-4" />
+                      <span>Add to Shopping Bag</span>
+                    </>
+                  )}
                 </button>
               </div>
-              {stock > 0 && quantity >= stock && (
-                <p className="text-[11px] text-amber-600 font-medium">
-                  ⚠️ Maximum available stock reached ({stock} items in stock).
-                </p>
-              )}
             </div>
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-2 gap-3 pt-6 border-t border-gray-100 text-xs text-gray-600">
+            {/* Value Props */}
+            <div className="grid grid-cols-2 gap-3 pt-4 border-t border-gray-100 text-xs text-gray-700">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-rose-600" />
-                <span>Zero UV &amp; Drill Damage</span>
+                <Zap className="w-4 h-4 text-amber-500" />
+                <span>Patented Cold Gel Tech</span>
               </div>
               <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-rose-600" />
-                <span>10-Minute Application</span>
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>Non-damaging Natural Nails</span>
               </div>
               <div className="flex items-center gap-2">
-                <RotateCcw className="w-4 h-4 text-rose-600" />
+                <RotateCcw className="w-4 h-4 text-blue-600" />
                 <span>Reusable 5+ Times</span>
               </div>
               <div className="flex items-center gap-2">

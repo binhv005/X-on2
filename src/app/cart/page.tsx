@@ -204,6 +204,7 @@ export default function CartPage() {
                         src={item.image || "/images/IMG_7098.JPG"}
                         alt={item.title}
                         fill
+                        sizes="96px"
                         className="object-cover"
                       />
                     </div>

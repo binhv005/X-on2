@@ -92,6 +92,7 @@ export default function GalleryComingSoonPage() {
                 alt="Enlarged nail look"
                 fill
                 unoptimized
+                sizes="(max-width: 1024px) 100vw, 900px"
                 className="object-contain"
               />
             </div>

@@ -97,7 +97,7 @@ export default function BundleAndSavePage() {
                       ? `/product/${prod.slug}`
                       : `/product/${prod.slug}`
                   }
-                  className="block w-full h-full"
+                  className="relative block w-full h-full"
                 >
                   <Image
                     src={prod.image}

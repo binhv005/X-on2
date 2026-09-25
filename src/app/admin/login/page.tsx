@@ -41,6 +41,7 @@ export default function AdminLoginPage() {
             alt="X-ON Luxury Nails"
             fill
             priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover object-center"
           />
 

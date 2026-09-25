@@ -141,6 +141,7 @@ export default function BlogPostDetailPage({
               fill
               priority
               unoptimized
+              sizes="(max-width: 1024px) 100vw, 1024px"
               className="object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;

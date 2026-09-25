@@ -167,27 +167,27 @@ export default function AdminNewsletterPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap sm:flex-nowrap">
           <button
             onClick={fetchNewsletter}
-            className="p-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl transition-colors cursor-pointer"
+            className="p-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl transition-colors cursor-pointer shrink-0"
             title="Refresh list"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
           </button>
           <button
             onClick={handleExportCSV}
-            className="px-4 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-800 text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-800 text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Download className="w-4 h-4" />
-            <span>Export CSV</span>
+            <Download className="w-4 h-4 shrink-0" />
+            <span className="whitespace-nowrap">Export CSV</span>
           </button>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-5 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
+            className="px-5 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4" />
-            <span>Add Subscriber</span>
+            <Plus className="w-4 h-4 shrink-0" />
+            <span className="whitespace-nowrap">Add Subscriber</span>
           </button>
         </div>
       </div>

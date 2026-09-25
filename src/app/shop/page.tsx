@@ -159,6 +159,7 @@ export default function ShopPage() {
                   src={s.img}
                   alt={s.name}
                   fill
+                  sizes="80px"
                   className="object-contain"
                 />
               </div>
@@ -349,7 +350,7 @@ export default function ShopPage() {
                 {filteredProducts.map((prod) => (
                   <div key={prod.id} className="group flex flex-col bg-white">
                     <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
-                      <Link href={`/product/${prod.slug}`}>
+                      <Link href={`/product/${prod.slug}`} className="relative block w-full h-full">
                         <Image
                           src={prod.image}
                           alt={prod.title}

@@ -112,7 +112,7 @@ export default function GalleryProductPage() {
 
                   <div
                     onClick={() => setSelectedImg(item.image)}
-                    className="w-full h-full"
+                    className="relative w-full h-full"
                   >
                     <Image
                       src={item.image}
@@ -189,6 +189,7 @@ export default function GalleryProductPage() {
               src={selectedImg}
               alt="Enlarged view"
               fill
+              sizes="(max-width: 1024px) 100vw, 800px"
               className="object-contain"
             />
           </div>

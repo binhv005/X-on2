@@ -32,7 +32,7 @@ export function ProductCard({ product }: { product: Product }) {
     <div className="group relative flex flex-col bg-white rounded-lg overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300">
       {/* Product Image Container */}
       <div className="relative aspect-square w-full overflow-hidden bg-gray-50">
-        <Link href={`/product/${product.slug}`} className="block w-full h-full">
+        <Link href={`/product/${product.slug}`} className="relative block w-full h-full">
           <Image
             src={product.image || "/images/logolala.webp"}
             alt={product.title}

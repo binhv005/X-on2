@@ -15,6 +15,7 @@ import {
   Save,
   CheckCircle2,
   X,
+  Eye,
 } from "lucide-react";
 
 export default function AdminWholesalePage() {
@@ -256,9 +257,10 @@ export default function AdminWholesalePage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => openEdit(w)}
-                          className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-semibold text-xs rounded-lg transition-colors cursor-pointer"
+                          title="View & Review Details"
+                          className="p-1.5 text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center"
                         >
-                          Review &amp; Notes
+                          <Eye className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => setDeleteTarget(w)}

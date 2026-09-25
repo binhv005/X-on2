@@ -117,6 +117,7 @@ export function AdminSidebar({
             fill
             priority
             unoptimized
+            sizes="200px"
             className="object-contain object-center"
           />
         </Link>

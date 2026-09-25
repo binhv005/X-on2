@@ -66,6 +66,7 @@ export function CartDrawer() {
                       src={item.image || "/images/logolala.webp"}
                       alt={item.title}
                       fill
+                      sizes="80px"
                       className="object-cover"
                     />
                   </div>

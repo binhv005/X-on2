@@ -674,7 +674,17 @@ export const DataStore = {
 
     return { products: paginated, total, page, totalPages: Math.ceil(total / limit) };
   },
-  getProductById: (id: string) => getStore().products.find((p) => p.id === id || p.slug === id),
+  getProductById: (id: string) => {
+    const store = getStore();
+    const q = decodeURIComponent(id || "").toLowerCase().trim();
+    return store.products.find(
+      (p) =>
+        p.id?.toLowerCase() === q ||
+        p.slug?.toLowerCase() === q ||
+        p.id === id ||
+        p.slug === id
+    );
+  },
   createProduct: (data: Omit<ProductItem, "id" | "createdAt" | "updatedAt">) => {
     const store = getStore();
     const newProduct: ProductItem = {

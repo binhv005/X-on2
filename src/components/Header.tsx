@@ -69,6 +69,7 @@ export function Header() {
                 fill
                 priority
                 unoptimized
+                sizes="(max-width: 768px) 150px, 182px"
                 className="object-contain"
               />
             </Link>
@@ -268,6 +269,7 @@ export function Header() {
                         src="/images/IMG_7098.JPG"
                         alt="Bundles"
                         fill
+                        sizes="250px"
                         className="object-cover group-hover/card:scale-105 transition-transform"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-3">
@@ -289,6 +291,7 @@ export function Header() {
                         src="/images/IMG_7101.JPG"
                         alt="Y2K"
                         fill
+                        sizes="250px"
                         className="object-cover group-hover/card:scale-105 transition-transform"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-3">
@@ -310,6 +313,7 @@ export function Header() {
                         src="/images/IMG_7105.JPG"
                         alt="Best seller"
                         fill
+                        sizes="250px"
                         className="object-cover group-hover/card:scale-105 transition-transform"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-3">
