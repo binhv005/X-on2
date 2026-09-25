@@ -38,12 +38,32 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-xs">
+    <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-xs relative overflow-hidden">
+      {/* Decorative Floral Backgrounds on Left & Right sides */}
+      <div className="absolute left-0 top-0 bottom-0 w-36 sm:w-48 md:w-64 lg:w-80 h-full opacity-70 pointer-events-none select-none z-0">
+        <Image
+          src="/images/decorations/header-floral-left.png"
+          alt=""
+          fill
+          unoptimized
+          className="object-contain object-left"
+        />
+      </div>
+      <div className="absolute right-0 top-0 bottom-0 w-36 sm:w-48 md:w-64 lg:w-80 h-full opacity-70 pointer-events-none select-none z-0">
+        <Image
+          src="/images/decorations/header-floral-right.png"
+          alt=""
+          fill
+          unoptimized
+          className="object-contain object-right"
+        />
+      </div>
+
       {/* Top Header Row: Hamburger - Logo - Icons */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="relative flex items-center justify-between h-24 sm:h-28">
           {/* Left: Mobile hamburger - only on mobile/tablet */}
-          <div className="flex items-center lg:hidden">
+          <div className="flex items-center lg:hidden relative z-10">
             <button
               onClick={() => setMobileOpen(true)}
               className="p-2 text-gray-800 hover:text-black focus:outline-hidden"
