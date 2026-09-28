@@ -68,20 +68,20 @@ export default function GalleryProductPage() {
         {/* Floating Title Box */}
         <div className="max-w-2xl mx-auto text-center p-6 sm:p-8 rounded-xl bg-white/70 backdrop-blur-xs shadow-xs mb-10 sm:mb-12">
           <h3 className="text-sm sm:text-base font-bold uppercase tracking-wider text-black mb-2">
-            Now Selling
+            READY TO WEAR
           </h3>
           <h2 className="text-3xl sm:text-5xl font-bold font-serif text-[#dd9933] mb-3 leading-tight">
-            Product Gallery
+            Find Your Perfect Set
           </h2>
           <p className="text-sm sm:text-base text-neutral-800 mb-6">
-            Explore the products currently available in our collection.
+            Discover handcrafted press-on nails designed to fit your style and your moment.
           </p>
           <div>
             <Link
               href="/shop"
               className="inline-block px-8 py-3 bg-black hover:bg-neutral-800 text-white text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-[11px] transition-colors shadow-md"
             >
-              Shop now
+              SHOP THE COLLECTION
             </Link>
           </div>
         </div>

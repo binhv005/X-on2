@@ -221,7 +221,7 @@ export default function HomePage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h1 className="text-xl sm:text-2xl font-bold uppercase tracking-widest text-gray-900 font-serif">
-              HANDMADE GRIP-X NAILS
+              THE X-ON COLLECTION
             </h1>
             <div className="w-12 h-0.5 bg-rose-400 mx-auto mt-3" />
           </div>

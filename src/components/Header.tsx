@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
@@ -20,7 +20,17 @@ export function Header() {
   const [shopExpanded, setShopExpanded] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
   const { openCart, totalCount, subtotal } = useCart();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const scrollToTop = () => {
     if (typeof window !== "undefined") {
@@ -38,10 +48,16 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-xs">
+    <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-xs transition-shadow duration-300">
       {/* Top Header Row: Hamburger - Logo - Icons */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative flex items-center justify-between h-14 sm:h-16 md:h-18 lg:h-20">
+        <div
+          className={`relative flex items-center justify-between transition-all duration-300 ease-in-out ${
+            isScrolled
+              ? "h-14 sm:h-16 md:h-18 lg:h-20"
+              : "h-24 sm:h-32 md:h-40 lg:h-48 py-2 sm:py-4"
+          }`}
+        >
           {/* Left: Mobile hamburger - only on mobile/tablet */}
           <div className="flex items-center lg:hidden">
             <button
@@ -57,11 +73,15 @@ export function Header() {
           <div className="hidden lg:flex items-center" />
 
           {/* Center: Logo - absolutely centered always */}
-          <div className="absolute left-1/2 -translate-x-1/2">
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
             <Link
               href="/"
               onClick={handleLinkClick}
-              className="relative block h-9 sm:h-11 md:h-13 lg:h-15 w-28 sm:w-36 md:w-[160px] lg:w-[182px] transition-transform hover:scale-105"
+              className={`relative block transition-all duration-300 ease-in-out hover:scale-105 ${
+                isScrolled
+                  ? "h-9 sm:h-11 md:h-13 lg:h-15 w-28 sm:w-36 md:w-[160px] lg:w-[182px]"
+                  : "h-20 sm:h-28 md:h-36 lg:h-44 w-[240px] sm:w-[360px] md:w-[460px] lg:w-[546px] max-w-[55vw] sm:max-w-[65vw] lg:max-w-none"
+              }`}
             >
               <Image
                 src="/images/logo-xon.png"
@@ -69,7 +89,7 @@ export function Header() {
                 fill
                 priority
                 unoptimized
-                sizes="(max-width: 768px) 150px, 182px"
+                sizes="(max-width: 768px) 360px, 550px"
                 className="object-contain"
               />
             </Link>
